@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trae-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: trae-app
+  template:
+    metadata:
+      labels:
+        app: trae-app
+    spec:
+      containers:
+      - name: trae-app
+        image: ${DOCKER_REGISTRY}/trae-app:${IMAGE_TAG}
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trae-app-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: trae-app
